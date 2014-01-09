@@ -203,7 +203,7 @@ MisPars.Lexer = MisPars.Lexer || {};
                     break;
             }
         }
-        if (state != Lexer.State.Init) {
+        if (state !== Lexer.State.Init) {
             dummy.type = Lexer.Token.Error;
         }
         return dummy;
