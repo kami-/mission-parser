@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Mission Parser</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script type="text/javascript" src="js/lexer.js">
+    </script>
+</head>
+<body>
+    <div style="width: 1010px; height: 700px;">
+        <div style="width: 400px; height: 700px; float: left; margin-right: 10px;">
+            <button id="btn" onclick="btnClick()">Lex it!</button>
+            <textarea id="textBox" cols="200" rows="50" style="width: 380px; height: 680px;"></textarea>
+        </div>
+    </div>
+    <script>
+        function btnClick() {
+            MisPars.Lexer.init(document.getElementById("textBox").value);
+            var token = MisPars.Lexer.getNextToken();
+            while (token.type != MisPars.Lexer.Token.End && token.type != MisPars.Lexer.Token.Error) {
+                console.log("lexeme: " + token.lexeme + ", type: " + token.type);
+                var token = MisPars.Lexer.getNextToken();
+            }
+            console.log("lexeme: " + token.lexeme + ", type: " + token.type);
+        };
+    </script>
+</body>
+</html>
