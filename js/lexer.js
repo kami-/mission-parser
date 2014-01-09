@@ -27,10 +27,16 @@ MisPars.Lexer = MisPars.Lexer || {};
         RSB: 16, // ]
         Comma: 17,  // ,
         SemiColon: 18,  // ;
-        Equal: 19 // =
+        Equal: 19, // =
+
+        // Keyword
+        Class: 21
     };
 
-    // States
+    Lexer.Keywords = {
+        "class": Lexer.Token.Class
+    };
+
     Lexer.State = {
         Error: -1, // Error
         Init: 0, // Initial state before token
@@ -153,7 +159,12 @@ MisPars.Lexer = MisPars.Lexer || {};
                         state = Lexer.State.ID;
                     }
                     else {
-                        return createToken(input.substring(tokenFirstIndex, index), Lexer.Token.ID);
+                        var lexeme = input.substring(tokenFirstIndex, index);
+                        var token = Lexer.Token.ID;
+                        if (Lexer.Keywords.hasOwnProperty(lexeme)) {
+                            token = Lexer.Keywords[lexeme];
+                        };
+                        return createToken(lexeme, token);
                     }
                     break;
 
