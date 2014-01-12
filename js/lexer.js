@@ -28,6 +28,7 @@ MisPars.Lexer = MisPars.Lexer || {};
         Comma: 17,  // ,
         SemiColon: 18,  // ;
         Equal: 19, // =
+        Minus: 20, // -
 
         // Keyword
         Class: 21
@@ -45,8 +46,8 @@ MisPars.Lexer = MisPars.Lexer || {};
         Float: 2, // Float
         ID: 3, // Identifier
         String: 4, // First "
-        FirstQuote: 5, // 
-        SecondQuote: 6 // 
+        FirstQuote: 5, //
+        SecondQuote: 6
     };
 
 
@@ -115,11 +116,13 @@ MisPars.Lexer = MisPars.Lexer || {};
                     else if (input[index] === '"') {
                         state = Lexer.State.String;
                     }
+                    else if (input[index] === '-') {
+                        state = Lexer.State.Int;
+                    }
                     else {
                         state = Lexer.State.Error;
                     }
                     break;
-
                 case Lexer.State.Int:
                     nextChar();
                     if (isDigit(input[index])) {
