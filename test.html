@@ -7,6 +7,8 @@
     </script>
     <script type="text/javascript" src="js/lexer.js">
     </script>
+    <script type="text/javascript" src="js/parser.js">
+    </script>
 </head>
 <body>
     <div style="width: 1010px; height: 700px;">
@@ -17,13 +19,15 @@
     </div>
     <script>
         function btnClick() {
-            MisPars.Lexer.init(document.getElementById("textBox").value);
+            /*MisPars.Lexer.init(document.getElementById("textBox").value);
             var token = MisPars.Lexer.getNextToken();
             while (token.type != MisPars.Lexer.Token.End && token.type != MisPars.Lexer.Token.Error) {
                 console.log("lexeme: " + token.lexeme + ", type: " + token.type);
                 var token = MisPars.Lexer.getNextToken();
             }
-            console.log("lexeme: " + token.lexeme + ", type: " + token.type);
+            console.log("lexeme: " + token.lexeme + ", type: " + token.type);*/
+            MisPars.Parser.init(document.getElementById("textBox").value, MisPars.Lexer);
+            console.log(MisPars.Parser.parse());
         };
     </script>
 </body>
