@@ -65,12 +65,13 @@ MisPars.Parser = MisPars.Parser || {};
     // Non-terminal: field
     var field = function() {
         var token = currentToken;
-        var node = { "value": token.lexeme };
+        var node = {};
 
         // Rule: field -> idField ;
         if (currentToken.type === Lexer.Token.ID) {
             acceptToken(Lexer.Token.ID);
-            node.fieldValue = idField();
+            node = idField();
+            node.value = token.lexeme;
             acceptToken(Lexer.Token.SemiColon);
         }
         // Rule: field -> classField ;
@@ -84,28 +85,31 @@ MisPars.Parser = MisPars.Parser || {};
             parserError();
             return null;
         }
-
         return node;
     };
 
     // Non-terminal: idField
     var idField = function() {
+        var node = {};
+
         // Rule: idField -> simpleField
         if (currentToken.type === Lexer.Token.Equal) {
             acceptToken(Lexer.Token.Equal);
-            return simpleField();
+            node.fieldValue = simpleField();
+            node.type = Parser.NodeType.SimpleField;
         }
         // Rule: idField -> arrayField
         else if (currentToken.type === Lexer.Token.LSB) {
             acceptToken(Lexer.Token.LSB);
-            return arrayField();
+            node.fieldValue = arrayField();
+            node.type = Parser.NodeType.ArrayField;
         }
         // Error
         else {
             parserError();
+            return null;
         }
-
-        return null;
+        return node;
     };
 
     // Non-terminal: simpleField
