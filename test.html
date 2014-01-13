@@ -9,12 +9,18 @@
     </script>
     <script type="text/javascript" src="js/parser.js">
     </script>
+    <script type="text/javascript" src="js/prettyprinter.js">
+    </script>
 </head>
 <body>
     <div style="width: 1010px; height: 700px;">
         <div style="width: 400px; height: 700px; float: left; margin-right: 10px;">
             <button id="btn" onclick="btnClick()">Lex it!</button>
             <textarea id="textBox" cols="200" rows="50" style="width: 380px; height: 680px;"></textarea>
+        </div>
+        <div style="width: 400px; height: 700px; float: right; margin-right: 10px;">
+            Pretty Print
+            <textarea id="ppBox" cols="200" rows="50" style="width: 380px; height: 680px;"></textarea>
         </div>
     </div>
     <script>
@@ -26,8 +32,9 @@
                 var token = MisPars.Lexer.getNextToken();
             }
             console.log("lexeme: " + token.lexeme + ", type: " + token.type);*/
-            MisPars.Parser.init(document.getElementById("textBox").value, MisPars.Lexer);
-            console.log(MisPars.Parser.parse());
+            MisPars.Parser.init($('#textBox').val(), MisPars.Lexer);
+            ast = MisPars.Parser.parse();
+            $('#ppBox').val(MisPars.PrettyPrinter.pp(ast, "    "));
         };
     </script>
 </body>
