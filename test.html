@@ -11,6 +11,8 @@
     </script>
     <script type="text/javascript" src="js/prettyprinter.js">
     </script>
+    <script type="text/javascript" src="js/simpleast.js">
+    </script>
 </head>
 <body>
     <div style="width: 1010px; height: 700px;">
@@ -35,6 +37,7 @@
             MisPars.Parser.init($('#textBox').val(), MisPars.Lexer);
             ast = MisPars.Parser.parse();
             $('#ppBox').val(MisPars.PrettyPrinter.pp(ast, "    "));
+            var newAst = MisPars.SimpleAst.simplify(ast);
         };
     </script>
 </body>
