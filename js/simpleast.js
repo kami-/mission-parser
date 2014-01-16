@@ -7,8 +7,8 @@ MisPars.SimpleAst = MisPars.SimpleAst || {};
 
     SimpleAst.simplify = function(ast) {
         var newAst = {};
-        for(var i = 0; i < ast.length; i++) {
-            simplifyNode(newAst, ast[i]);
+        for(var i = 0; i < ast.fields.length; i++) {
+            simplifyNode(newAst, ast.fields[i]);
         }
         return newAst;
     };
