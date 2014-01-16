@@ -8,13 +8,8 @@ MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
     var identationString = '\t';
 
     PrettyPrinter.pp = function(ast, identString) {
-        var ppString = "";
         identationString = identString;
-        for(var i = 0; i < ast.length; i++) {
-            ppString += ppNode(ast[i], "");
-            ppString += '\n';
-        }
-        return ppString;
+        return ppNode(ast, "");
     };
     
     var ppNode = function(node, identation) {
@@ -25,7 +20,7 @@ MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
         else if (node.type === Parser.NodeType.ArrayField) {
             ppString += ppArrayField(node, identation);
         }
-        else if (node.type === Parser.NodeType.ClassField) {
+        else if (node.type === Parser.NodeType.ClassField || node.type === Parser.NodeType.Root) {
             ppString += ppClassField(node, identation);
         }
         else {
