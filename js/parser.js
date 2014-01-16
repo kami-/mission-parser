@@ -6,6 +6,7 @@ MisPars.Parser = MisPars.Parser || {};
 
     Parser.NodeType = {
         Error:          -1,
+        Root:           0,
         Int:            1,
         Float:          2,
         String:         3,
@@ -22,13 +23,13 @@ MisPars.Parser = MisPars.Parser || {};
     Parser.init = function(input, lex) {
         Lexer = lex;
         Lexer.init(input);
-        ast = null;
+        ast = { "type": Parser.NodeType.Root };
     };
 
     // Parses tokens from Lexer
     Parser.parse = function() {
         currentToken = Lexer.getNextToken();
-        ast = start();
+        ast.fields = start();
         if (currentToken.type !== Lexer.Token.End) {
             parserError();
         }
