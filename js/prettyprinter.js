@@ -72,7 +72,7 @@ MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
         }
         ppString += '\n'
         ppString += identation;
-        return ppString + "};";
+        return ppString + "}";
     };
     
     var ppClassField = function(node, identation) {
