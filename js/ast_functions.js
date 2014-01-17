@@ -5,8 +5,14 @@ MisPars.AstFunctions = MisPars.AstFunctions || {};
 (function(AstFunctions, Parser, undefined) {
 
     // Triggers are in Missions.Sensors
-    AstFunctions.exportTriggers = function(ast) {
-        
+    AstFunctions.removeTriggers = function(ast) {
+        var missions = AstFunctions.select(ast, "Mission");
+        if (missions.length === 1) {
+            var sensorIndex = missions[0].fields.first(function(node) { return node.value === "Sensors" });
+            if (sensorIndex >= 0) {
+                missions[0].fields.splice(sensorIndex, 1);
+            };
+        }
     };
 
     AstFunctions.select = function(ast, query) {
@@ -23,7 +29,7 @@ MisPars.AstFunctions = MisPars.AstFunctions || {};
         }
         return result;
     };
-    
+
     var findFieldInNode = function(node, fieldName) {
         var result = [];
         if (node.type === Parser.NodeType.ClassField || node.type === Parser.NodeType.Root) {
@@ -31,7 +37,7 @@ MisPars.AstFunctions = MisPars.AstFunctions || {};
         }
         return result;
     };
-    
+
     var findFieldInArray = function(fields, fieldName) {
         var result = [];
         for(var i = 0; i < fields.length; i++) {
