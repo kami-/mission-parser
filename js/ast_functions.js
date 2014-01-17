@@ -53,5 +53,18 @@ MisPars.AstFunctions = MisPars.AstFunctions || {};
             value.indexOf(fieldName.substring(0, fieldName.length - 1)) === 0;
     };
 
+    var removeField = function(node, fieldName) {
+        
+    };
+
+    Array.prototype.first = function(compare) {
+        for(var i = 0; i < this.length; i++) {
+            if (compare(this[i])) {
+                return i;
+            }
+        }
+        return -1;
+    };
+
 
 }(MisPars.AstFunctions, MisPars.Parser));
