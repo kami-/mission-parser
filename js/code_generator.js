@@ -3,19 +3,27 @@ MisPars.CodeGen = MisPars.CodeGen || {};
 
 (function(CodeGen, Parser, $ast, $simpl, undefined) {
 
+    CodeGen.allTrigger = function(triggerNodes) {
+        var code = '\nprivate ["_triggers, _trigger"];\n';
+        code += '_triggers = [];\n'
+        for(var i = 0; i < triggerNodes.length; i++) {
+            var trigger = CodeGen.trigger(triggerNodes[i]);
+            code += trigger.code;
+            code += "_triggers set " + array("count _triggers", trigger.trigger.name) + ";\n\n";
+        }
+        return code;
+    };
+
     CodeGen.trigger = function(triggerNode) {
         var trigger = $simpl.simplify(triggerNode);
-        var code = trigger.name;
-        code += assignment(trigger.name, 'createTrigger ["EmptyDetector", ' + fromArry(trigger.position) + ']') + '\n';
-        code += trigger.name + " setTriggerArea " + array(trigger.a, trigger.b, trigger.angle, bool(trigger.rectangular));
-        /*code += trigger.name + " setTriggerActivation [" "NONE", "NOT PRESENT", false];
-        code += trigger.name + 
-        code += trigger.name + 
-        bomb2 
-        bomb2 setTriggerStatements["this", "", ""];
-        bomb2 setTriggerTimeout[10, 0, 0, true];
-        bomb2 setTriggerText "cqc";*/
-        return code;
+        initTrigger(trigger);
+        var code = assignment(trigger.name, "createTrigger " + array('"EmptyDetector"', fromArray(trigger.position))) + '\n';
+        code += trigger.name + " setTriggerArea " + array(trigger.a, trigger.b, trigger.angle, bool(trigger.rectangular)) + ';\n';
+        code += trigger.name + " setTriggerActivation " + array(trigger.activationBy, trigger.activationType, bool(trigger.repeating)) + ";\n";
+        code += trigger.name + " setTriggerStatements " + array(trigger.expCond, trigger.expActiv, trigger.expDesactiv)+ ";\n";
+        code += trigger.name + " setTriggerTimeout " + array(trigger.timeoutMin, trigger.timeoutMid, trigger.timeoutMax, bool(trigger.interruptable)) + ";\n";
+        code += trigger.name + " setTriggerText " + trigger.text + ";\n";
+        return {"trigger": trigger, "code": code};
     };
 
     var assignment = function(left, right) {
@@ -23,7 +31,7 @@ MisPars.CodeGen = MisPars.CodeGen || {};
     };
 
     var array = function() {
-        var code = "";
+        var code = "[";
         for(var i = 0; i < arguments.length; i++) {
             if (i !== 0) {
                 code += ", ";
@@ -49,6 +57,35 @@ MisPars.CodeGen = MisPars.CodeGen || {};
             return "true";
         } else {
             return "false";
+        }
+    };
+
+    var initTrigger = function(trigger) {
+        properties = {
+            "name": "_trigger", "a": "100", "b": "100", "angle": "0", "text": '""', "rectangular": "0", "repeating": "0",
+            "age": '"UNKNOWN"', "activationBy": '"NONE"', "expCond": '"this"', "expActiv": '""', "expDesactiv": '""',
+            "interruptable": "1", "activationType": '"NOT PRESENT"', "timeoutMin": "0", "timeoutMid": "0", "timeoutMax": "0"
+        };
+        setProperties(trigger, properties);
+        trigger.name = unQuoteString(trigger.name);
+    };
+
+    var unQuoteString = function(string) {
+        if (string.length > 2 && string[0] === '"' && string[string.length - 1] === '"') {
+            return string.substring(1, string.length - 1);
+        }
+        return string;
+    };
+
+    var setProperties = function(object, properties) {
+        for (property in properties) {
+            setProperty(object, property, properties[property]);
+        };
+    };
+
+    var setProperty = function(object, prop, defval) {
+        if (!object.hasOwnProperty(prop)) {
+            object[prop] = defval;
         }
     };
 
