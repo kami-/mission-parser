@@ -15,13 +15,16 @@ MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
     
     var ppNode = function(node, identation) {
         var ppString = identation;
-        if (node.type === Parser.NodeType.SimpleField) {
+        if (node.type === Parser.NodeType.Root) {
+            ppString += ppRootFields(node.fields, identation);
+        }
+        else if (node.type === Parser.NodeType.SimpleField) {
             ppString += ppSimpleField(node);
         }
         else if (node.type === Parser.NodeType.ArrayField) {
             ppString += ppArrayField(node, identation);
         }
-        else if (node.type === Parser.NodeType.ClassField || node.type === Parser.NodeType.Root) {
+        else if (node.type === Parser.NodeType.ClassField) {
             ppString += ppClassField(node, identation);
         }
         else {
@@ -82,13 +85,30 @@ MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
         ppString += '\n';
         ppString += identation;
         ppString += "{";
-        for(var i = 0; i < node.fields.length; i++) {
-            ppString += '\n';
-            ppString += ppNode(node.fields[i], identation + identationString);
-        }
+        ppString += ppClassesFields(node.fields, identation);
         ppString += '\n'
         ppString += identation;
         return ppString + "};";
+    };
+
+    var ppClassesFields = function(fields, identation) {
+        var ppString = "";
+        for(var i = 0; i < fields.length; i++) {
+            ppString += '\n';
+            ppString += ppNode(fields[i], identation + identationString);
+        }
+        return ppString;
+    };
+
+    var ppRootFields = function(fields, identation) {
+        var ppString = "";
+        for(var i = 0; i < fields.length; i++) {
+            if (i !== 0) {
+                ppString += '\n';
+            }
+            ppString += ppNode(fields[i], identation);
+        }
+        return ppString;
     };
 
 }(MisPars.PrettyPrinter, MisPars.Parser));
