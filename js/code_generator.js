@@ -2,6 +2,7 @@ var MisPars = MisPars || {};
 MisPars.CodeGen = MisPars.CodeGen || {};
 
 (function(CodeGen, Parser, $ast, $simpl, undefined) {
+    "use strict";
 
     CodeGen.allTrigger = function(triggerNodes) {
         var code = '\nprivate ["_triggers, _trigger"];\n';

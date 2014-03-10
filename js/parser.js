@@ -3,6 +3,7 @@ MisPars.Lexer = MisPars.Lexer || {};
 MisPars.Parser = MisPars.Parser || {};
 
 (function(Parser, undefined) {
+    "use strict";
 
     Parser.NodeType = {
         Error:          -1,

@@ -3,6 +3,7 @@ MisPars.Parser = MisPars.Parser || {};
 MisPars.AstFunctions = MisPars.AstFunctions || {};
 
 (function(AstFunctions, Parser, undefined) {
+    "use strict";
 
     // Triggers are in Missions.Sensors
     AstFunctions.removeTriggers = function(ast) {

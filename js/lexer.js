@@ -3,6 +3,8 @@ MisPars.Lexer = MisPars.Lexer || {};
 
 // Lexer
 (function (Lexer, undefined) {
+    "use strict";
+
     ///////////////////////////
     // Public members
     ///////////////////////////

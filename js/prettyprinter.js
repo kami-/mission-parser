@@ -4,6 +4,7 @@ MisPars.Parser = MisPars.Parser || {};
 MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
 
 (function(PrettyPrinter, Parser, undefined) {
+    "use strict";
 
     var identationString = '\t';
 

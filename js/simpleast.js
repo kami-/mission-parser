@@ -4,6 +4,7 @@ MisPars.Parser = MisPars.Parser || {};
 MisPars.SimpleAst = MisPars.SimpleAst || {};
 
 (function(SimpleAst, Parser, undefined) {
+    "use strict";
 
     SimpleAst.simplify = function(ast) {
         var newAst = {};
