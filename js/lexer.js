@@ -1,15 +1,15 @@
-﻿var MisPars = MisPars || {};
-MisPars.Lexer = MisPars.Lexer || {};
+﻿var $mp = $mp || {};
+$mp.l = $mp.l || {};
 
 // Lexer
-(function (Lexer, undefined) {
+(function ($l, undefined) {
     "use strict";
 
     ///////////////////////////
     // Public members
     ///////////////////////////
 
-    Lexer.Token = {
+    $l.Token = {
         // Special
         Error: -1, // Signals error in lexing
         End: 0, // Signals the end of lexing
@@ -36,11 +36,11 @@ MisPars.Lexer = MisPars.Lexer || {};
         Class: 21
     };
 
-    Lexer.Keywords = {
-        "class": Lexer.Token.Class
+    $l.Keywords = {
+        "class": $l.Token.Class
     };
 
-    Lexer.State = {
+    $l.State = {
         Error: -1, // Error
         Init: 0, // Initial state before token
 
@@ -61,7 +61,7 @@ MisPars.Lexer = MisPars.Lexer || {};
     var index = 0;
     var lineNumber = 0;
     var columnNumber = 0;
-    var state = Lexer.State.Init;
+    var state = $l.State.Init;
     var tokenFirstIndex = 0;
 
 
@@ -69,8 +69,8 @@ MisPars.Lexer = MisPars.Lexer || {};
     // Public functions
     ///////////////////////////
 
-    Lexer.init = function (inp) {
-        state = Lexer.State.Init;
+    $l.init = function (inp) {
+        state = $l.State.Init;
         index = 0;
         lineNumber = 0;
         columnNumber = 0;
@@ -78,138 +78,138 @@ MisPars.Lexer = MisPars.Lexer || {};
         tokenFirstIndex = 0;
     };
 
-    Lexer.getNextToken = function () {
-        var dummy = { "lexeme": "", "type": Lexer.Token.End };
+    $l.getNextToken = function () {
+        var dummy = { "lexeme": "", "type": $l.Token.End };
         while (index < input.length) {
             switch (state) {
-                case Lexer.State.Init:
+                case $l.State.Init:
                     if (isWhiteSpace(input[index])) {
-                        state = Lexer.State.Init;
+                        state = $l.State.Init;
                         nextChar();
                         tokenFirstIndex = index;
                     }
                     else if (isDigit(input[index])) {
-                        state = Lexer.State.Int;
+                        state = $l.State.Int;
                     }
                     else if (input[index] === '.') {
-                        state = Lexer.State.Dot;
+                        state = $l.State.Dot;
                     }
                     else if (isAlphabet(input[index])) {
-                        state = Lexer.State.ID;
+                        state = $l.State.ID;
                     }
                     else if (isPunctuation(input[index])) {
                         var token = { "lexeme": input[index] };
                         switch (input[index]) {
-                            case '(': token.type = Lexer.Token.LB; break;
-                            case ')': token.type = Lexer.Token.RB; break;
-                            case '{': token.type = Lexer.Token.LCB; break;
-                            case '}': token.type = Lexer.Token.RCB; break;
-                            case '[': token.type = Lexer.Token.LSB; break;
-                            case ']': token.type = Lexer.Token.RSB; break;
-                            case ',': token.type = Lexer.Token.Comma; break;
-                            case ';': token.type = Lexer.Token.SemiColon; break;
-                            case '=': token.type = Lexer.Token.Equal; break;
+                            case '(': token.type = $l.Token.LB; break;
+                            case ')': token.type = $l.Token.RB; break;
+                            case '{': token.type = $l.Token.LCB; break;
+                            case '}': token.type = $l.Token.RCB; break;
+                            case '[': token.type = $l.Token.LSB; break;
+                            case ']': token.type = $l.Token.RSB; break;
+                            case ',': token.type = $l.Token.Comma; break;
+                            case ';': token.type = $l.Token.SemiColon; break;
+                            case '=': token.type = $l.Token.Equal; break;
                         }
-                        state = Lexer.State.Init;
+                        state = $l.State.Init;
                         nextChar();
                         tokenFirstIndex = index;
                         return token;
                     }
                     else if (input[index] === '"') {
-                        state = Lexer.State.String;
+                        state = $l.State.String;
                     }
                     else if (input[index] === '-') {
-                        state = Lexer.State.Int;
+                        state = $l.State.Int;
                     }
                     else {
-                        state = Lexer.State.Error;
+                        state = $l.State.Error;
                     }
                     break;
-                case Lexer.State.Int:
+                case $l.State.Int:
                     nextChar();
                     if (isDigit(input[index])) {
-                        state = Lexer.State.Int;
+                        state = $l.State.Int;
                     }
                     else if (input[index] === '.') {
-                        state = Lexer.State.Float;
+                        state = $l.State.Float;
                     }
                     else {
-                        return createToken(input.substring(tokenFirstIndex, index), Lexer.Token.Int);
+                        return createToken(input.substring(tokenFirstIndex, index), $l.Token.Int);
                     }
                     break;
 
-                case Lexer.State.Dot:
+                case $l.State.Dot:
                     nextChar();
                     if (isDigit(input[index])) {
-                        state = Lexer.State.Float;
+                        state = $l.State.Float;
                     }
                     else {
-                        state = Lexer.State.Error;
+                        state = $l.State.Error;
                     }
                     break;
 
-                case Lexer.State.Float:
+                case $l.State.Float:
                     nextChar();
                     if (isDigit(input[index])) {
-                        state = Lexer.State.Float;
+                        state = $l.State.Float;
                     }
                     else {
-                        return createToken(input.substring(tokenFirstIndex, index), Lexer.Token.Float);
+                        return createToken(input.substring(tokenFirstIndex, index), $l.Token.Float);
                     }
                     break;
 
-                case Lexer.State.ID:
+                case $l.State.ID:
                     nextChar();
                     if (isAlphabet(input[index]) || isDigit(input[index])) {
-                        state = Lexer.State.ID;
+                        state = $l.State.ID;
                     }
                     else {
                         var lexeme = input.substring(tokenFirstIndex, index);
-                        var token = Lexer.Token.ID;
-                        if (Lexer.Keywords.hasOwnProperty(lexeme)) {
-                            token = Lexer.Keywords[lexeme];
+                        var token = $l.Token.ID;
+                        if ($l.Keywords.hasOwnProperty(lexeme)) {
+                            token = $l.Keywords[lexeme];
                         };
                         return createToken(lexeme, token);
                     }
                     break;
 
-                case Lexer.State.String:
+                case $l.State.String:
                     nextChar();
                     if (input[index] === '"') {
-                        state = Lexer.State.FirstQuote;
+                        state = $l.State.FirstQuote;
                     }
                     else {
-                        state = Lexer.State.String;
+                        state = $l.State.String;
                     }
                     break;
 
-                case Lexer.State.FirstQuote:
+                case $l.State.FirstQuote:
                     nextChar();
                     if (input[index] === '"') {
-                        state = Lexer.State.SecondQuote;
+                        state = $l.State.SecondQuote;
                     }
                     else {
-                        return createToken(input.substring(tokenFirstIndex, index), Lexer.Token.String);
+                        return createToken(input.substring(tokenFirstIndex, index), $l.Token.String);
                     }
                     break;
 
-                case Lexer.State.SecondQuote:
+                case $l.State.SecondQuote:
                     nextChar();
                     if (input[index] === '"') {
-                        state = Lexer.State.FirstQuote;
+                        state = $l.State.FirstQuote;
                     }
                     else {
-                        state = Lexer.State.String;
+                        state = $l.State.String;
                     }
                     break;
 
-                case Lexer.State.Error:
-                    return { "lexeme": "", type: Lexer.Token.Error };
+                case $l.State.Error:
+                    return { "lexeme": "", type: $l.Token.Error };
                     break;
             }
         }
-        if (state !== Lexer.State.Init) {
-            dummy.type = Lexer.Token.Error;
+        if (state !== $l.State.Init) {
+            dummy.type = $l.Token.Error;
         }
         return dummy;
     }
@@ -256,8 +256,8 @@ MisPars.Lexer = MisPars.Lexer || {};
     };
 
     var resetState = function() {
-        state = Lexer.State.Init;
+        state = $l.State.Init;
         tokenFirstIndex = index;
     };
 
-}(MisPars.Lexer));
+}($mp.l));

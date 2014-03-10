@@ -1,22 +1,22 @@
-var MisPars = MisPars || {};
-MisPars.CodeGen = MisPars.CodeGen || {};
+var $mp = $mp || {};
+$mp.cg = $mp.cg || {};
 
-(function(CodeGen, Parser, $ast, $simpl, undefined) {
+(function($cg, $p, $af, $sa, undefined) {
     "use strict";
 
-    CodeGen.allTrigger = function(triggerNodes) {
+    $cg.allTrigger = function(triggerNodes) {
         var code = '\nprivate ["_triggers, _trigger"];\n';
         code += '_triggers = [];\n'
         for(var i = 0; i < triggerNodes.length; i++) {
-            var trigger = CodeGen.trigger(triggerNodes[i]);
+            var trigger = $cg.trigger(triggerNodes[i]);
             code += trigger.code;
             code += "_triggers set " + array("count _triggers", trigger.trigger.name) + ";\n\n";
         }
         return code;
     };
 
-    CodeGen.trigger = function(triggerNode) {
-        var trigger = $simpl.simplify(triggerNode);
+    $cg.trigger = function(triggerNode) {
+        var trigger = $sa.simplify(triggerNode);
         initTrigger(trigger);
         var code = assignment(trigger.name, "createTrigger " + array('"EmptyDetector"', fromArray(trigger.position))) + '\n';
         code += trigger.name + " setTriggerArea " + array(trigger.a, trigger.b, trigger.angle, bool(trigger.rectangular)) + ';\n';
@@ -90,4 +90,4 @@ MisPars.CodeGen = MisPars.CodeGen || {};
         }
     };
 
-}(MisPars.CodeGen, MisPars.Parser, MisPars.AstFunctions, MisPars.SimpleAst));
+}($mp.cg, $mp.p, $mp.af, $mp.sa));

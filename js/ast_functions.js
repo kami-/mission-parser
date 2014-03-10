@@ -1,22 +1,25 @@
-var MisPars = MisPars || {};
-MisPars.Parser = MisPars.Parser || {};
-MisPars.AstFunctions = MisPars.AstFunctions || {};
+var $mp = $mp || {};
+$mp.p = $mp.p || {};
+$mp.af = $mp.af || {};
 
-(function(AstFunctions, Parser, undefined) {
+(function($af, $p, undefined) {
     "use strict";
 
-    // Triggers are in Missions.Sensors
-    AstFunctions.removeTriggers = function(ast) {
-        var missions = AstFunctions.select(ast, "Mission");
-        if (missions.length === 1) {
-            var sensorIndex = missions[0].fields.first(function(node) { return node.value === "Sensors" });
-            if (sensorIndex >= 0) {
-                missions[0].fields.splice(sensorIndex, 1);
-            };
-        }
-    };
+    $af.trigger = $af.trigger || {};
+    (function($trigger, $af, $p, undefined) {
+        // Triggers are in Missions.Sensors
+        $trigger.removeTriggers = function(ast) {
+            var missions = $af.select(ast, "Mission");
+            if (missions.length === 1) {
+                var sensorIndex = $af.firstIndex(missions[0].fields, function(node) { return node.value === "Sensors" });
+                if (sensorIndex >= 0) {
+                    missions[0].fields.splice(sensorIndex, 1);
+                };
+            }
+        };
+    })($af.trigger, $af, $p, undefined);
 
-    AstFunctions.select = function(ast, query) {
+    $af.select = function(ast, query) {
         var fields = query.split(".");
         var node = ast;
         var result = [];
@@ -33,7 +36,7 @@ MisPars.AstFunctions = MisPars.AstFunctions || {};
 
     var findFieldInNode = function(node, fieldName) {
         var result = [];
-        if (node.type === Parser.NodeType.ClassField || node.type === Parser.NodeType.Root) {
+        if (node.type === $p.NodeType.ClassField || node.type === $p.NodeType.Root) {
             result = findFieldInArray(node.fields, fieldName);
         }
         return result;
@@ -58,14 +61,30 @@ MisPars.AstFunctions = MisPars.AstFunctions || {};
         
     };
 
-    Array.prototype.first = function(compare) {
-        for(var i = 0; i < this.length; i++) {
-            if (compare(this[i])) {
+    $af.firstIndex = function(array, compare) {
+        for(var i = 0; i < array.length; i++) {
+            if (compare(array[i])) {
                 return i;
             }
         }
         return -1;
     };
 
+    $af.first = function(array, compare) {
+        for(var i = 0; i < array.length; i++) {
+            if (compare(array[i])) {
+                return [array[i]];
+            }
+        }
+        return [];
+    };
 
-}(MisPars.AstFunctions, MisPars.Parser));
+    $af.hasValue = function(array, value) {
+        return $af.firstIndex(array, function(other){ return other === value; }) >= 0;
+    };
+
+    $af.isEmpty = function(array) {
+        return array.length === 0;
+    };
+
+}($mp.af, $mp.p));

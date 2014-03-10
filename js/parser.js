@@ -1,11 +1,11 @@
-﻿var MisPars = MisPars || {};
-MisPars.Lexer = MisPars.Lexer || {};
-MisPars.Parser = MisPars.Parser || {};
+﻿var $mp = $mp || {};
+$mp.l = $mp.l || {};
+$mp.p = $mp.p || {};
 
-(function(Parser, undefined) {
+(function($p, undefined) {
     "use strict";
 
-    Parser.NodeType = {
+    $p.NodeType = {
         Error:          -1,
         Root:           0,
         Int:            1,
@@ -17,21 +17,21 @@ MisPars.Parser = MisPars.Parser || {};
         SimpleField:    7
     };
 
-    var Lexer = {};
+    var $l = {};
     var currentToken = {};
     var ast = null;
 
-    Parser.init = function(input, lex) {
-        Lexer = lex;
-        Lexer.init(input);
-        ast = { "type": Parser.NodeType.Root };
+    $p.init = function(input, lex) {
+        $l = lex;
+        $l.init(input);
+        ast = { "type": $p.NodeType.Root };
     };
 
     // Parses tokens from Lexer
-    Parser.parse = function() {
-        currentToken = Lexer.getNextToken();
+    $p.parse = function() {
+        currentToken = $l.getNextToken();
         ast.fields = start();
-        if (currentToken.type !== Lexer.Token.End) {
+        if (currentToken.type !== $l.Token.End) {
             parserError();
         }
         return ast;
@@ -40,7 +40,7 @@ MisPars.Parser = MisPars.Parser || {};
     var start = function() {
         var elems = [];
         // Rule: start -> fields
-        if (currentToken.type === Lexer.Token.ID || currentToken.type === Lexer.Token.Class) {
+        if (currentToken.type === $l.Token.ID || currentToken.type === $l.Token.Class) {
             elems = fields(elems);
         }
         // Error
@@ -55,7 +55,7 @@ MisPars.Parser = MisPars.Parser || {};
     // Non-terminal: fields
     var fields = function(elems) {
         // Rule: fields -> field fields
-        if (currentToken.type === Lexer.Token.ID || currentToken.type === Lexer.Token.Class) {
+        if (currentToken.type === $l.Token.ID || currentToken.type === $l.Token.Class) {
             elems.push(field());
             elems = fields(elems);
         }
@@ -70,17 +70,17 @@ MisPars.Parser = MisPars.Parser || {};
         var node = {};
 
         // Rule: field -> idField ;
-        if (currentToken.type === Lexer.Token.ID) {
-            acceptToken(Lexer.Token.ID);
+        if (currentToken.type === $l.Token.ID) {
+            acceptToken($l.Token.ID);
             node = idField();
             node.value = token.lexeme;
-            acceptToken(Lexer.Token.SemiColon);
+            acceptToken($l.Token.SemiColon);
         }
         // Rule: field -> classField ;
-        else if (currentToken.type === Lexer.Token.Class) {
-            acceptToken(Lexer.Token.Class);
+        else if (currentToken.type === $l.Token.Class) {
+            acceptToken($l.Token.Class);
             node = classField();
-            acceptToken(Lexer.Token.SemiColon);
+            acceptToken($l.Token.SemiColon);
         }
         // Error
         else {
@@ -95,16 +95,16 @@ MisPars.Parser = MisPars.Parser || {};
         var node = {};
 
         // Rule: idField -> simpleField
-        if (currentToken.type === Lexer.Token.Equal) {
-            acceptToken(Lexer.Token.Equal);
+        if (currentToken.type === $l.Token.Equal) {
+            acceptToken($l.Token.Equal);
             node.fieldValue = simpleField();
-            node.type = Parser.NodeType.SimpleField;
+            node.type = $p.NodeType.SimpleField;
         }
         // Rule: idField -> arrayField
-        else if (currentToken.type === Lexer.Token.LSB) {
-            acceptToken(Lexer.Token.LSB);
+        else if (currentToken.type === $l.Token.LSB) {
+            acceptToken($l.Token.LSB);
             node.fieldValue = arrayField();
-            node.type = Parser.NodeType.ArrayField;
+            node.type = $p.NodeType.ArrayField;
         }
         // Error
         else {
@@ -117,8 +117,8 @@ MisPars.Parser = MisPars.Parser || {};
     // Non-terminal: simpleField
     var simpleField = function() {
         // Rule: simpleField -> primitiveValue
-        if (currentToken.type === Lexer.Token.Int || currentToken.type === Lexer.Token.Float
-            || currentToken.type === Lexer.Token.String) {
+        if (currentToken.type === $l.Token.Int || currentToken.type === $l.Token.Float
+            || currentToken.type === $l.Token.String) {
             return primitiveValue();
         }
         // Error
@@ -133,19 +133,19 @@ MisPars.Parser = MisPars.Parser || {};
         var node = { "value": token.lexeme };
 
         // Rule: primitiveValue -> Int
-        if (currentToken.type === Lexer.Token.Int) {
-            acceptToken(Lexer.Token.Int);
-            node.type = Parser.NodeType.Int;
+        if (currentToken.type === $l.Token.Int) {
+            acceptToken($l.Token.Int);
+            node.type = $p.NodeType.Int;
         }
         // Rule: primitiveValue -> Float
-        else if (currentToken.type === Lexer.Token.Float) {
-            acceptToken(Lexer.Token.Float);
-            node.type = Parser.NodeType.Float;
+        else if (currentToken.type === $l.Token.Float) {
+            acceptToken($l.Token.Float);
+            node.type = $p.NodeType.Float;
         }
         // Rule: primitiveValue -> String
-        else if (currentToken.type === Lexer.Token.String) {
-            acceptToken(Lexer.Token.String);
-            node.type = Parser.NodeType.String;
+        else if (currentToken.type === $l.Token.String) {
+            acceptToken($l.Token.String);
+            node.type = $p.NodeType.String;
         }
         // Error
         else {
@@ -159,11 +159,11 @@ MisPars.Parser = MisPars.Parser || {};
         var node = { "elements": [] };
 
         // Rule: arrayField -> ] = { array
-        if (currentToken.type === Lexer.Token.RSB) {
-            acceptToken(Lexer.Token.RSB);
-            acceptToken(Lexer.Token.Equal);
-            acceptToken(Lexer.Token.LCB);
-            node.type = Parser.NodeType.Array;
+        if (currentToken.type === $l.Token.RSB) {
+            acceptToken($l.Token.RSB);
+            acceptToken($l.Token.Equal);
+            acceptToken($l.Token.LCB);
+            node.type = $p.NodeType.Array;
             node.elements = array();
         }
         // Error
@@ -178,12 +178,12 @@ MisPars.Parser = MisPars.Parser || {};
         var elems = []
 
         // Rule: array -> }
-        if (currentToken.type === Lexer.Token.RCB) {
-            acceptToken(Lexer.Token.RCB);
+        if (currentToken.type === $l.Token.RCB) {
+            acceptToken($l.Token.RCB);
         }
         // Rule: array -> primitiveValue arrayTail
-        else if (currentToken.type === Lexer.Token.Int || currentToken.type === Lexer.Token.Float
-            || currentToken.type === Lexer.Token.String) {
+        else if (currentToken.type === $l.Token.Int || currentToken.type === $l.Token.Float
+            || currentToken.type === $l.Token.String) {
             elems.push(primitiveValue());
             elems = arrayTail(elems);
         }
@@ -198,12 +198,12 @@ MisPars.Parser = MisPars.Parser || {};
     // Non-terminal: arrayTail
     var arrayTail = function (elems) {
         // Rule: arrayTail -> }
-        if (currentToken.type === Lexer.Token.RCB) {
-            acceptToken(Lexer.Token.RCB);
+        if (currentToken.type === $l.Token.RCB) {
+            acceptToken($l.Token.RCB);
         }
         // Rule: arrayTail -> , primitiveValue arrayTail
-        else if (currentToken.type === Lexer.Token.Comma) {
-            acceptToken(Lexer.Token.Comma);
+        else if (currentToken.type === $l.Token.Comma) {
+            acceptToken($l.Token.Comma);
             elems.push(primitiveValue());
             elems = arrayTail(elems);
         }
@@ -220,12 +220,12 @@ MisPars.Parser = MisPars.Parser || {};
         var node = { "value": token.lexeme, "fields": [] };
 
         // Rule: classField -> id { fields }
-        if (currentToken.type === Lexer.Token.ID) {
-            acceptToken(Lexer.Token.ID);
-            acceptToken(Lexer.Token.LCB);
-            node.type = Parser.NodeType.ClassField;
+        if (currentToken.type === $l.Token.ID) {
+            acceptToken($l.Token.ID);
+            acceptToken($l.Token.LCB);
+            node.type = $p.NodeType.ClassField;
             node.fields = fields(node.fields);
-            acceptToken(Lexer.Token.RCB);
+            acceptToken($l.Token.RCB);
         }
         else {
             parserError();
@@ -240,11 +240,11 @@ MisPars.Parser = MisPars.Parser || {};
 
     var acceptToken = function (tokenType) {
         if (currentToken.type === tokenType) {
-            currentToken = Lexer.getNextToken();
+            currentToken = $l.getNextToken();
         }
         else {
             parserError();
         }
     };
 
-}(MisPars.Parser));
+}($mp.p));

@@ -1,30 +1,29 @@
-var MisPars = MisPars || {};
-MisPars.Lexer = MisPars.Lexer || {};
-MisPars.Parser = MisPars.Parser || {};
-MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
+var $mp = $mp || {};
+$mp.p = $mp.p || {};
+$mp.pp = $mp.pp || {};
 
-(function(PrettyPrinter, Parser, undefined) {
+(function($pp, $p, undefined) {
     "use strict";
 
     var identationString = '\t';
 
-    PrettyPrinter.pp = function(ast, identString) {
+    $pp.pp = function(ast, identString) {
         identationString = identString;
         return ppNode(ast, "");
     };
     
     var ppNode = function(node, identation) {
         var ppString = identation;
-        if (node.type === Parser.NodeType.Root) {
+        if (node.type === $p.NodeType.Root) {
             ppString += ppRootFields(node.fields, identation);
         }
-        else if (node.type === Parser.NodeType.SimpleField) {
+        else if (node.type === $p.NodeType.SimpleField) {
             ppString += ppSimpleField(node);
         }
-        else if (node.type === Parser.NodeType.ArrayField) {
+        else if (node.type === $p.NodeType.ArrayField) {
             ppString += ppArrayField(node, identation);
         }
-        else if (node.type === Parser.NodeType.ClassField) {
+        else if (node.type === $p.NodeType.ClassField) {
             ppString += ppClassField(node, identation);
         }
         else {
@@ -42,7 +41,7 @@ MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
     var ppArrayField = function(node, identation) {
         var ppString = node.value;
         ppString += "[]=";
-        if (node.fieldValue.elements[0].type === Parser.NodeType.String) {
+        if (node.fieldValue.elements[0].type === $p.NodeType.String) {
             ppString += ppStringArray(node.fieldValue.elements, identation);
         }
         else {
@@ -111,4 +110,4 @@ MisPars.PrettyPrinter = MisPars.PrettyPrinter || {};
         return ppString;
     };
 
-}(MisPars.PrettyPrinter, MisPars.Parser));
+}($mp.pp, $mp.p));

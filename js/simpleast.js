@@ -1,12 +1,11 @@
-var MisPars = MisPars || {};
-MisPars.Lexer = MisPars.Lexer || {};
-MisPars.Parser = MisPars.Parser || {};
-MisPars.SimpleAst = MisPars.SimpleAst || {};
+var $mp = $mp || {};
+$mp.p = $mp.p || {};
+$mp.sa = $mp.sa || {};
 
-(function(SimpleAst, Parser, undefined) {
+(function($sa, $p, undefined) {
     "use strict";
 
-    SimpleAst.simplify = function(ast) {
+    $sa.simplify = function(ast) {
         var newAst = {};
         for(var i = 0; i < ast.fields.length; i++) {
             simplifyNode(newAst, ast.fields[i]);
@@ -15,13 +14,13 @@ MisPars.SimpleAst = MisPars.SimpleAst || {};
     };
 
     var simplifyNode = function(parent, node) {
-        if (node.type === Parser.NodeType.SimpleField) {
+        if (node.type === $p.NodeType.SimpleField) {
             parent[node.value] = node.fieldValue.value;
         }
-        else if (node.type === Parser.NodeType.ArrayField) {
+        else if (node.type === $p.NodeType.ArrayField) {
             parent[node.value] = simplifyArray(node.fieldValue.elements);
         }
-        else if (node.type === Parser.NodeType.ClassField) {
+        else if (node.type === $p.NodeType.ClassField) {
             parent[node.value] = {};
             simplifyFields(parent[node.value], node.fields);
         }
@@ -43,4 +42,4 @@ MisPars.SimpleAst = MisPars.SimpleAst || {};
         }
     };
 
-}(MisPars.SimpleAst, MisPars.Parser));
+}($mp.sa, $mp.p));

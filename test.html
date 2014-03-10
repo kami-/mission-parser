@@ -36,10 +36,10 @@
                 var token = MisPars.Lexer.getNextToken();
             }
             console.log("lexeme: " + token.lexeme + ", type: " + token.type);*/
-            MisPars.Parser.init($('#textBox').val(), MisPars.Lexer);
-            ast = MisPars.Parser.parse();
-            $('#ppBox').val(MisPars.PrettyPrinter.pp(ast, "    "));
-            var newAst = MisPars.SimpleAst.simplify(ast);
+            $mp.p.init($('#textBox').val(), $mp.l);
+            ast = $mp.p.parse();
+            $('#ppBox').val($mp.pp.pp(ast, "    "));
+            var newAst = $mp.sa.simplify(ast);
         };
     </script>
 </body>
