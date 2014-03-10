@@ -46,7 +46,7 @@ MisPars.Parser = MisPars.Parser || {};
         // Error
         else {
             parserError();
-            return null;
+            return [];
         }
 
         return elems;
