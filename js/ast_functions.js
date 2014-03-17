@@ -19,12 +19,34 @@ $mp.af = $mp.af || {};
         };
     })($af.trigger, $af, $p, undefined);
 
+    $af.updateNodeItems = function(node, items) {
+        var fields = [];
+        var fieldItems = $af.select(node, "items");
+        if (fieldItems.length === 0) {
+            addEmptySimpleNode(node, "items", "1", items.length);
+            fieldItems = $af.select(node, "items")[0];
+        } else {
+            fieldItems = fieldItems[0];
+            fieldItems.fieldValue.value = items.length;
+        }
+        fields.push(fieldItems);
+        addNewItemIds(fields, items);
+        node.fields = fields;
+    };
+
+    var addNewItemIds = function(fields, items) {
+        for (var i = 0, len = items.length; i < len; i++) {
+            items[i].value = "Item" + i;
+            fields.push(items[i]);
+        }
+    };
+
     $af.select = function(ast, query) {
         var fields = query.split(".");
         var node = ast;
         var result = [];
         for (var i = 0; i < fields.length; i++) {
-            var result = findFieldInNode(node, fields[i]);
+            result = findFieldInNode(node, fields[i]);
             if (result.length == 1) {
                 node = result[0];
             } else if (i !== fields.length - 1) {
@@ -57,8 +79,32 @@ $mp.af = $mp.af || {};
             value.indexOf(fieldName.substring(0, fieldName.length - 1)) === 0;
     };
 
-    var removeField = function(node, fieldName) {
-        
+    $af.selectOrAddClass = function(ast, selector, className) {
+        var nodes = $af.select(ast, selector + "." + className);
+        var result = {};
+        if (nodes.length > 0) {
+            result = nodes[0];
+        } else {
+            addEmptyClassNode($af.select(ast, selector)[0], className);
+            result = $af.select(ast, selector + "." + className)[0];
+        }
+        return result;
+    };
+
+    var addEmptyClassNode = function(node, className) {
+        node.fields.push({
+            fields: [],
+            type: 6,
+            value: className
+        });
+    };
+
+    var addEmptySimpleNode = function(node, fieldName, valueType, fieldValue) {
+        node.fields.push({
+            "fieldValue": {"type": valueType, "value": fieldValue},
+            "type": 7,
+            "value": fieldName
+        });
     };
 
     $af.firstIndex = function(array, compare) {
@@ -70,21 +116,8 @@ $mp.af = $mp.af || {};
         return -1;
     };
 
-    $af.first = function(array, compare) {
-        for(var i = 0; i < array.length; i++) {
-            if (compare(array[i])) {
-                return [array[i]];
-            }
-        }
-        return [];
-    };
-
-    $af.hasValue = function(array, value) {
-        return $af.firstIndex(array, function(other){ return other === value; }) >= 0;
-    };
-
-    $af.isEmpty = function(array) {
-        return array.length === 0;
+    $af.unQuote = function(value) {
+        return value.substring(1, value.length - 1);
     };
 
 }($mp.af, $mp.p));
