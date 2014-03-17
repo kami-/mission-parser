@@ -34,8 +34,12 @@
       <div class="inner clearfix">
         <section id="main-content">
           <div style="width: 1010px; height: 700px;">
+        <div style="width: 1000px; float: left; margin-bottom: 20px;">
+            <form id="faction-form"></form>
+        </div>
         <div style="width: 400px; height: 700px; float: left; margin-right: 10px;">
-            <button id="btn" onclick="btnClick()">Parse it!</button>
+            <!-- <button id="btn" onclick="btnLex()">Lex it!</button> -->
+            <button id="btn" onclick="btnAddFactions()">Add factions</button>
             <textarea id="textBox" cols="200" rows="50" style="width: 380px; height: 680px;"></textarea>
         </div>
         <div style="width: 400px; height: 700px; float: right; margin-right: 10px;">
@@ -44,18 +48,29 @@
         </div>
     </div>
     <script>
-        function btnClick() {
-            /*MisPars.Lexer.init(document.getElementById("textBox").value);
-            var token = MisPars.Lexer.getNextToken();
-            while (token.type != MisPars.Lexer.Token.End && token.type != MisPars.Lexer.Token.Error) {
-                console.log("lexeme: " + token.lexeme + ", type: " + token.type);
-                var token = MisPars.Lexer.getNextToken();
-            }
-            console.log("lexeme: " + token.lexeme + ", type: " + token.type);*/
-            MisPars.Parser.init($('#textBox').val(), MisPars.Lexer);
-            ast = MisPars.Parser.parse();
-            $('#ppBox').val(MisPars.PrettyPrinter.pp(ast, "    "));
+        function btnLex() {
+            $mp.p.init($('#textBox').val(), $mp.l);
+            ast = $mp.p.parse();
+            $('#ppBox').val($mp.pp.pp(ast, "    "));
         };
+        function btnAddFactions() {
+            $mp.p.init($('#textBox').val(), $mp.l);
+            ast = $mp.p.parse();
+            $mp.hull.addFactions(ast, $('#faction-form input:checked').map(function(index, value){
+                return $(this).val();
+            }));
+            $('#ppBox').val($mp.pp.pp(ast, "    "));
+        };
+        (function($factions, $, undefined) {
+            $('#textBox').val($mp.hull.defaultMission);
+            var factionForm = $('#faction-form');
+            for(var faction in $factions) {
+                if ($factions.hasOwnProperty(faction)) {
+                    var f = $factions[faction];
+                    factionForm.append('<div style="float: left; width: 200px;"><label>' + f.displayName + ' <input type="checkbox" id="form-' + f.name +'" name="' + f.name + '" value="' + f.name + '" /></label><div>');
+                }
+            }
+        }($mp.hull.factions, jQuery));
     </script>
         </section>
 
