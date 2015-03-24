@@ -1,29 +1,37 @@
 var $mp = $mp || {};
-$mp.p = $mp.p || {};
+
 $mp.pp = $mp.pp || {};
 
 (function($pp, $p, undefined) {
     "use strict";
 
-    var identationString = '\t';
+    var identationString = '    ';
 
     $pp.pp = function(ast, identString) {
-        identationString = identString;
+        if (identString) { 
+            identationString = identString;
+        }
         return ppNode(ast, "");
     };
     
     var ppNode = function(node, identation) {
         var ppString = identation;
-        if (node.type === $p.NodeType.Root) {
+        if (node.type === $p.Node.Root) {
             ppString += ppRootFields(node.fields, identation);
         }
-        else if (node.type === $p.NodeType.SimpleField) {
-            ppString += ppSimpleField(node);
+        else if (node.type === $p.Node.LiteralField) {
+            ppString += ppLiteralField(node);
         }
-        else if (node.type === $p.NodeType.ArrayField) {
+        else if (isLiteral(node.type)) {
+            ppString += ppLiteral(node);
+        }
+        else if (node.type === $p.Node.ArrayField) {
             ppString += ppArrayField(node, identation);
         }
-        else if (node.type === $p.NodeType.ClassField) {
+        else if (node.type === $p.Node.Array) {
+            ppString += ppArray(node.elements, identation);
+        }
+        else if (node.type === $p.Node.ClassField) {
             ppString += ppClassField(node, identation);
         }
         else {
@@ -31,21 +39,24 @@ $mp.pp = $mp.pp || {};
         return ppString;
     };
     
-    var ppSimpleField = function(node) {
-        var ppString = node.value;
-        ppString += "=";
-        ppString += node.fieldValue.value;
+    var ppLiteralField = function(node) {
+        var ppString = node.field;
+        ppString += " = ";
+        ppString += node.value;
         return ppString += ";";
     };
-    
+
+    var ppLiteral = function(node) {
+        return node.value;
+    };
+
     var ppArrayField = function(node, identation) {
-        var ppString = node.value;
-        ppString += "[]=";
-        if (node.fieldValue.elements[0].type === $p.NodeType.String) {
-            ppString += ppStringArray(node.fieldValue.elements, identation);
-        }
-        else {
-            ppString += ppArray(node.fieldValue.elements, identation + identationString);
+        var ppString = node.field;
+        ppString += "[] = ";
+        if (node.elements.length > 1 && node.elements[0].type === $p.Node.Array) {
+            ppString += ppNestedArray(node.elements, identation);
+        } else {
+            ppString += ppArray(node.elements, identation);
         }
         return ppString += ";";
     };
@@ -54,24 +65,22 @@ $mp.pp = $mp.pp || {};
         var ppString = "{";
         for(var i = 0; i < elements.length; i++) {
             if (i !== 0) {
-                ppString += ",";
+                ppString += ", ";
             }
-            ppString += elements[i].value;
+            ppString += ppNode(elements[i], '');
         }
         return ppString + "}";
     };
-    
-    var ppStringArray = function(elements, identation) {
-        var ppString = '\n';
-        ppString += identation;
-        ppString += "{";
+
+    var ppNestedArray = function(elements, identation) {
+        var ppString = "{";
         for(var i = 0; i < elements.length; i++) {
             if (i !== 0) {
                 ppString += ",";
             }
             ppString += '\n';
-            ppString += identation + identationString;
-            ppString += elements[i].value;
+            
+            ppString += ppNode(elements[i], identation + identationString);
         }
         ppString += '\n'
         ppString += identation;
@@ -80,14 +89,15 @@ $mp.pp = $mp.pp || {};
     
     var ppClassField = function(node, identation) {
         var ppString = "class ";
-        ppString += node.value;
-        ppString += '\n';
-        ppString += identation;
-        ppString += "{";
+        ppString += node.class;
+        if (node.inheritsFrom !== "") {
+            ppString += " : " + node.inheritsFrom;
+        }
+        ppString += " {";
         ppString += ppClassesFields(node.fields, identation);
         ppString += '\n'
         ppString += identation;
-        return ppString + "};";
+        return ppString + "};\n";
     };
 
     var ppClassesFields = function(fields, identation) {
@@ -108,6 +118,10 @@ $mp.pp = $mp.pp || {};
             ppString += ppNode(fields[i], identation);
         }
         return ppString;
+    };
+
+    var isLiteral = function(nodeType) {
+        return nodeType === $p.Node.Number || nodeType === $p.Node.String;
     };
 
 }($mp.pp, $mp.p));
