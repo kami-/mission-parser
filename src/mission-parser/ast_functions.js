@@ -1,5 +1,6 @@
 var $mp = $mp || {};
-$mp.p = $mp.p || {};
+$mp.p = require('./parser.js').$p;
+
 $mp.af = $mp.af || {};
 
 (function($af, $p, undefined) {
@@ -121,3 +122,5 @@ $mp.af = $mp.af || {};
     };
 
 }($mp.af, $mp.p));
+
+exports.$af = $mp.af;

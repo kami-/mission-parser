@@ -1,5 +1,5 @@
 ﻿var $mp = $mp || {};
-$mp.l = $mp.l || {};
+
 $mp.p = $mp.p || {};
 
 (function($p, undefined) {
@@ -234,8 +234,8 @@ $mp.p = $mp.p || {};
         return node;
     }
 
-    var parserError = function () {
-        console.log("Parsing error!");
+    var parserError = function (currToken, tokenType) {
+        console.log("Parsing error. Expected token '" + tokenType + "', but found token '" + currToken.type + "' at '" + currToken.line + ":" + currToken.column +"'!");
     };
 
     var acceptToken = function (tokenType) {
@@ -243,8 +243,10 @@ $mp.p = $mp.p || {};
             currentToken = $l.getNextToken();
         }
         else {
-            parserError();
+            parserError(currentToken, tokenType);
         }
     };
 
 }($mp.p));
+
+exports.$p = $mp.p;

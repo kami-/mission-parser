@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+ 
+<html lang="en">
+<head>
+    <title>Mission Parser</title>
+    <link href="mission-parser/styles.css" rel="stylesheet">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+</head>
+<body>
+    <div class="header text-center">
+        <span class="header-text">Mission Parser</span>
+    </div>
+    <div class="container pull-center">
+        <div class="row">
+             <div class="col-100">
+                <div class="form-group">
+                    <label for="game-select">Game</label>
+                    <div id="game-select-box">
+                        <select id="game-select">
+                            <option value="arma2" selected="selected">Arma 2</option>
+                            <option value="arma2-i44">Arma 2 - I44</option>
+                            <option value="arma3">Arma 3</option>
+                        </select>
+                    </div>
+                </div>
+             </div>
+        </div>
+        <div class="row">
+            <div class="col-100">
+                <div class="form-group">
+                    <label>Factions</label>
+                    <div id="faction-checkBoxes">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-100">
+                <div class="form-buttons">
+                    <button id="btn-checkAll" onclick="mp.selectAllFactions()">Check all</button>
+                    <button id="btn-add" onclick="mp.AddFactionsClick()">Add factions</button>
+                <div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-100">
+                <div id="editor" class="pp-box-size"></div>
+            </div>
+        </div>
+    </div>
+    <div>
+    </div>
+    <script>
+        var mp = {};
+        (function(mp, $, undefined) {
+            var factionFormDiv = $('#faction-checkBoxes'),
+                gameSelect = $('#game-select'),
+                checkAll = $('#btn-checkAll'),
+                checkedFactions = [],
+                selectedGame = 'arma2',
+                editor = ace.edit("editor")
+                isAllChecked = false;
+
+            var getFactions = function (game) {
+                $.get('/mission-parser/faction/' + game, createFactionCheckBoxes);
+            };
+
+            var createFactionCheckBoxes = function (factions) {
+                $(factionFormDiv).empty();
+                for(var i = 0, len = factions.length; i < len; i++) {
+                    var f = factions[i];
+                    factionFormDiv.append('<div class="checkbox"><label><input type="checkbox" id="form-' + f +'" name="' + f + '" value="' + f + '" />' + f + '</label><div>');
+                }
+            };
+
+            mp.selectAllFactions = function () {
+                if (!isAllChecked) {
+                    $(checkAll).text('Uncheck all');
+                    $('#faction-checkBoxes input[type="checkbox"]').prop('checked', true);
+                    isAllChecked = true;
+                } else {
+                    $(checkAll).text('Check all');
+                    $('#faction-checkBoxes input[type="checkbox"]').prop('checked', false);
+                    isAllChecked = false;
+                }
+            };
+
+            mp.AddFactionsClick = function () {
+                checkedFactions = [];
+                $('#faction-checkBoxes input:checked').each(function (index, value) {
+                    checkedFactions.push($(value).val());
+                });
+                $.post('/mission-parser/faction/' + selectedGame, JSON.stringify(checkedFactions), function (mission) {
+                    editor.setValue(mission);
+                });
+            };
+
+            getFactions(selectedGame);
+            editor.setTheme("ace/theme/github");
+            editor.getSession().setMode("ace/mode/c_cpp");
+            $(gameSelect).change( function () {
+                selectedGame = $("#game-select :selected").val();
+                getFactions(selectedGame);
+            });
+        }(mp, jQuery));
+    </script>
+</body>
+</html>

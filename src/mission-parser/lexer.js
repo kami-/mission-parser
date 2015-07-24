@@ -49,7 +49,8 @@ $mp.l = $mp.l || {};
         ID: 3, // Identifier
         String: 4, // First "
         FirstQuote: 5, //
-        SecondQuote: 6
+        SecondQuote: 6,
+        Exponent: 7
     };
 
 
@@ -142,6 +143,8 @@ $mp.l = $mp.l || {};
                     nextChar();
                     if (isDigit(input[index])) {
                         state = $l.State.Float;
+                    } else if (input[index] === 'e') {
+                        state = $l.State.Exponent;
                     }
                     else {
                         state = $l.State.Error;
@@ -152,9 +155,22 @@ $mp.l = $mp.l || {};
                     nextChar();
                     if (isDigit(input[index])) {
                         state = $l.State.Float;
+                    } else if (input[index] === 'e') {
+                        state = $l.State.Exponent;
                     }
                     else {
                         return createToken(input.substring(tokenFirstIndex, index), $l.Token.Float);
+                    }
+                    break;
+
+                case $l.State.Exponent:
+                    nextChar();
+                    if (isDigit(input[index])) {
+                        state = $l.State.Float;
+                    } else if (input[index] === '-' || input[index] === '+') {
+                        state = $l.State.Float;
+                    } else {
+                        state = $l.State.Error;
                     }
                     break;
 
@@ -228,7 +244,7 @@ $mp.l = $mp.l || {};
     };
 
     var isWhiteSpace = function (char) {
-        return char === ' ' || char === '\n' || char === '\t';
+        return char === ' ' || char === '\n' || char === '\t' || char ==='\r';
     };
 
     var isPunctuation = function (char) {
@@ -252,7 +268,12 @@ $mp.l = $mp.l || {};
 
     var createToken = function (lexeme, type) {
         resetState();
-        return { "lexeme": lexeme, "type": type };
+        return {
+            "lexeme": lexeme,
+            "type": type,
+            "line": lineNumber,
+            "column": columnNumber
+        };
     };
 
     var resetState = function() {
@@ -261,3 +282,5 @@ $mp.l = $mp.l || {};
     };
 
 }($mp.l));
+
+exports.$l = $mp.l;

@@ -1,4 +1,8 @@
 var $mp = $mp || {};
+$mp.p = require('./parser.js').$p;
+$mp.af = require('./ast_functions.js').$af;
+$mp.sa = require('./simpleast.js').$sa;
+
 $mp.cg = $mp.cg || {};
 
 (function($cg, $p, $af, $sa, undefined) {
@@ -91,3 +95,5 @@ $mp.cg = $mp.cg || {};
     };
 
 }($mp.cg, $mp.p, $mp.af, $mp.sa));
+
+exports.$cg = $mp.cg;

@@ -1,5 +1,6 @@
 var $mp = $mp || {};
-$mp.p = $mp.p || {};
+$mp.p = require('./parser.js').$p;
+
 $mp.sa = $mp.sa || {};
 
 (function($sa, $p, undefined) {
@@ -43,3 +44,5 @@ $mp.sa = $mp.sa || {};
     };
 
 }($mp.sa, $mp.p));
+
+exports.$sa = $mp.sa;
